@@ -1,4 +1,3 @@
-
 package de.hse.golfclubmanagement.services;
 
 import de.hse.golfclubmanagement.models.Tournament;
@@ -41,7 +40,6 @@ public class TournamentServiceTest {
         Tournament tournament = new Tournament();
         tournament.setName("Spring Championship");
 
-
         when(tournamentRepository.save(any(Tournament.class))).thenReturn(tournament);
         Tournament savedTournament = tournamentService.addTournament(tournament);
         assertEquals("Spring Championship", savedTournament.getName(), "The saved tournament name should match");
@@ -54,6 +52,14 @@ public class TournamentServiceTest {
     public void testAddNullTournament() {
         when(tournamentRepository.save(null)).thenThrow(new IllegalArgumentException("Tournament cannot be null"));
         assertThrows(IllegalArgumentException.class, () -> tournamentService.addTournament(null), "Should throw IllegalArgumentException for null Tournament");
+    }
+
+    @Test
+    public void testAddTournamentWithBlankName() {
+        Tournament tournament = new Tournament();
+        tournament.setName(" ");
+        assertThrows(IllegalArgumentException.class, () -> tournamentService.addTournament(tournament),
+                "Should throw IllegalArgumentException for blank name");
     }
 
     /**
@@ -96,22 +102,15 @@ public class TournamentServiceTest {
     }
 
     /**
-     * Test finding a Tournament by an empty name.
+     * Test finding a Tournament by an empty or null name.
      */
     @Test
-    public void testFindByNameEmpty() {
-        when(tournamentRepository.findByName("")).thenReturn(null);
-        Tournament emptyNameTournament = tournamentService.findByName("");
-        assertNull(emptyNameTournament, "Should return null for an empty name");
-    }
+    public void testFindByNameWithNullOrBlankName() {
+        // Überprüfe, ob die korrekte Exception mit der richtigen Nachricht geworfen wird
+        IllegalArgumentException exceptionNull = assertThrows(IllegalArgumentException.class, () -> tournamentService.findByName(null));
+        assertEquals("Name cannot be null or blank", exceptionNull.getMessage(), "Exception message should match expected");
 
-    /**
-     * Test finding a Tournament by a null name.
-     */
-    @Test
-    public void testFindByNameNull() {
-        when(tournamentRepository.findByName(null)).thenReturn(null);
-        Tournament nullNameTournament = tournamentService.findByName(null);
-        assertNull(nullNameTournament, "Should return null for a null name");
+        IllegalArgumentException exceptionBlank = assertThrows(IllegalArgumentException.class, () -> tournamentService.findByName(" "));
+        assertEquals("Name cannot be null or blank", exceptionBlank.getMessage(), "Exception message should match expected");
     }
 }
