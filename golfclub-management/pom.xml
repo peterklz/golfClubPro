@@ -110,6 +110,27 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Failsafe Plugin für Integrationstests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M8</version>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>**/MemberCucumberIT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
